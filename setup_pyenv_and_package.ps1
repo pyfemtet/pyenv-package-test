@@ -5,7 +5,7 @@ chcp 65001
 $ErrorActionPreference = "Stop"
 
 # debug
-$ISDEBUG = $true
+$ISDEBUG = $false
 
 # repository setting
 $repositoryName = "pyfemtet"
@@ -139,3 +139,5 @@ cd $testroot
 
 # save result
 $results | ConvertTo-Json | Out-File "environment_setup_result.json" -Encoding UTF8
+
+pause
