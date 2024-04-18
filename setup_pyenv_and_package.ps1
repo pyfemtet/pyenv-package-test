@@ -66,8 +66,15 @@ foreach ($stableVersion in $stableVersions) {
 $results = @{}
 
 # create directory its name is same as version name
+$total = $stableVersions.Count
+$current = 0
 foreach ($stableVersion in $stableVersions)
 {
+    # write-progress
+    $current++
+    $percentComplete = ($current / $total) * 100
+    Write-Progress -Activity "setup environment" -Status "env $current of $total" -PercentComplete $percentComplete
+
     # move to rootdir
     cd $testroot
 
@@ -110,11 +117,10 @@ foreach ($stableVersion in $stableVersions)
         continue
     }
 
-    <#
     # install package
     write-host try to install $repositoryName in $stableVersion
     remove-item .\poetry.lock
-    poetry install --without=dev
+    poetry install
 
     # no .lock file if install failed
     # -> test failed
@@ -126,7 +132,6 @@ foreach ($stableVersion in $stableVersions)
 
         continue
     }
-    #>
 
     # successfully environment set up
     $results.add($stableVersion, $true)
