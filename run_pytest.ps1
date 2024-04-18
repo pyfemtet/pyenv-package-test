@@ -5,6 +5,7 @@ $ErrorActionPreference = "Stop"
 $ISDEBUG = $true
 
 # repository setting
+# note: the package must have dependency to pytest-dashboard
 $repositoryName = "pyfemtet"
 
 ##### main #####
@@ -56,9 +57,11 @@ foreach ($version in $results.psobject.properties.name)
         poetry install
     }
 
+    # set $progressPath
+    $progressPath = "$testroot\progress\$version.yaml"
 
     # run_pytest via pytest-dashboard
-    poetry run python -m pytest_dashboard.run_pytest -d .\tests\test_2_NoFEM
+    poetry run pytest .\tests\test_2_NoFEM --progress-path=$progressPath
 
     if ($ISDEBUG) {break}
     
