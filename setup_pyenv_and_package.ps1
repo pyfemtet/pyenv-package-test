@@ -16,9 +16,20 @@ $repositoryURL = "https://github.com/pyfemtet/pyfemtet.git"
 
 # root
 $testroot = join-path $psscriptroot test_root
-if (test-path $testroot) {
-    cd $psscriptroot
+
+# clear previous environment
+$try = 0
+cd $psscriptroot
+while (test-path $testroot)
+{
+    $try++
     remove-item $testroot -recurse -force -verbose
+    start-sleep 1
+    if ($try -ge 3) {
+        write-error failed to clear $testroot
+        pause
+        exit
+    }
 }
 mkdir $testroot
 
@@ -145,4 +156,5 @@ cd $testroot
 # save result
 $results | ConvertTo-Json | Out-File "environment_setup_result.json" -Encoding UTF8
 
-pause
+
+if ($ISDEBUG) {pause}
