@@ -1,5 +1,4 @@
 test_root
 .vscode
 poetry.lock
-*\config.py
 *\__pycache__
