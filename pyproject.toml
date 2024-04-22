@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "pyenv-package-test"
+version = "0.1.0"
+description = "Create multiple python version environment (per bugfix_version) and run pytest. Target package is described in .ps1 files."
+authors = ["kn514 <148934231+kn514@users.noreply.github.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+pytest-dashboard = "*"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
