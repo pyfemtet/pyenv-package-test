@@ -46,7 +46,7 @@ foreach ($version in $results.psobject.properties.name)
     $progressPath = MakeProgressPath $version
 
     # create empty progress file
-    set-content -path $progressPath -value "" -encoding UTF8
+    set-content -path $progressPath -value ""
 }
 
 
