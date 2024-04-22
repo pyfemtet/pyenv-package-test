@@ -2,7 +2,7 @@
 $ErrorActionPreference = "Stop"
 
 # debug
-$ISDEBUG = $true
+$ISDEBUG = $false
 
 # repository setting
 # note: the package must have dependency to pytest-dashboard
@@ -46,7 +46,10 @@ foreach ($version in $results.psobject.properties.name)
     $progressPath = MakeProgressPath $version
 
     # create empty progress file
-    set-content -path $progressPath -value ""
+    # UTF8-BOMLess
+    # set-content -path $progressPath -value "" -encoding UTF8
+    $empty = [Text.Encoding]::UTF8.GetBytes("")
+    set-content -path $progressPath -value $empty
 }
 
 
