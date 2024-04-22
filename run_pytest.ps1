@@ -30,6 +30,10 @@ if (-not (test-path($jsonPath))) {
 $jsonString = Get-Content -Raw -Path $jsonPath
 $results = convertfrom-json $jsonString
 
+# make dir to save progress file
+if (-not (test-path("$testroot\progress"))) {mkdir $testroot\progress}
+
+
 # run pytest in successfully set up environment
 $total = $results.psobject.properties.name.count
 $current = 0
@@ -58,7 +62,7 @@ foreach ($version in $results.psobject.properties.name)
     }
 
     # set $progressPath
-    $progressPath = "$testroot\progress\$version.yaml"
+    $progressPath = "$testroot\progress\$version-progress.yaml"
 
     # run_pytest via pytest-dashboard
     poetry run pytest .\tests\test_2_NoFEM --progress-path=$progressPath
