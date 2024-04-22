@@ -1,3 +1,4 @@
 test_root
 .vscode
 poetry.lock
+send_mail.ps1
