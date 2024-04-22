@@ -33,6 +33,25 @@ $results = convertfrom-json $jsonString
 # make dir to save progress file
 if (-not (test-path("$testroot\progress"))) {mkdir $testroot\progress}
 
+# progress file path rule
+function MakeProgressPath ($_version)
+{
+    return "$testroot\progress\$_version-progress.yaml"
+}
+
+# before run pytest, create empty progress file
+foreach ($version in $results.psobject.properties.name)
+{
+    # set $progressPath
+    $progressPath = MakeProgressPath $version
+
+    # create empty progress file
+    set-content -path $progressPath -value "" -encoding UTF8
+}
+
+
+if ($ISDEBUG) {pause}
+
 
 # run pytest in successfully set up environment
 $total = $results.psobject.properties.name.count
@@ -53,7 +72,8 @@ foreach ($version in $results.psobject.properties.name)
     # move to environment
     cd $version\$repositoryName
 
-    if ($ISDEBUG) {
+#    if ($ISDEBUG) {
+    if ($false) {
         # pull
         git pull
         # re-install
@@ -62,7 +82,7 @@ foreach ($version in $results.psobject.properties.name)
     }
 
     # set $progressPath
-    $progressPath = "$testroot\progress\$version-progress.yaml"
+    $progressPath = MakeProgressPath $version
 
     # run_pytest via pytest-dashboard
     poetry run pytest .\tests\test_2_NoFEM --progress-path=$progressPath
@@ -70,5 +90,7 @@ foreach ($version in $results.psobject.properties.name)
     if ($ISDEBUG) {break}
     
 }
+
+cd $psscriptroot
 
 if ($ISDEBUG) {pause}
