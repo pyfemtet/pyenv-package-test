@@ -11,6 +11,13 @@ $ISDEBUG = $false
 $repositoryName = "pyfemtet"
 $repositoryURL = "https://github.com/pyfemtet/pyfemtet.git"
 
+# exception
+$exceptVersions = @(
+    "3.9.0",
+    "3.9.1",
+    "3.9.2"
+)
+
 
 ##### main #####
 
@@ -20,7 +27,7 @@ $testroot = join-path $psscriptroot test_root
 # clear previous environment
 $try = 0
 cd $psscriptroot
-while (test-path $testroot)
+while ((test-path $testroot) -and -not $isdebug)
 {
     $try++
     remove-item $testroot -recurse -force -verbose
@@ -31,7 +38,7 @@ while (test-path $testroot)
         exit
     }
 }
-mkdir $testroot
+if (-not $ISDEBUG) {mkdir $testroot}
 
 # cd
 cd $testroot
@@ -58,12 +65,18 @@ foreach ($availableVersion in $availableVersions)
         $bugfix = [int]($buff[2])
         $v = $major * 10000 + $minor * 100 + $bugfix
         if ($v -ge 30900) {
-            write-host python $availableVersion will be tested
-            $stableVersions += $availableVersion
-            if ($ISDEBUG) {break}
+
+            if ($exceptVersions -contains $availableVersion) {
+                write-host python $availableVersion is excepted
+            } else {
+                write-host python $availableVersion will be tested
+                $stableVersions += $availableVersion
+            }
         }
     }
 }
+
+if ($ISDEBUG) {exit}
 
 # install if not installed
 foreach ($stableVersion in $stableVersions) {
