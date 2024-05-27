@@ -5,7 +5,7 @@ chcp 65001
 $ErrorActionPreference = "Stop"
 
 # config
-$jsonFilePath = join-path $psscriptroot "config.json"
+$jsonFilePath = join-path $psscriptroot "test-config.json"
 $jsonContent = Get-Content -Raw -Path $jsonFilePath | ConvertFrom-Json
 $REPOSITORY_URL = $jsonContent.REPOSITORY_URL
 $PACKAGE_NAME = $jsonContent.PACKAGE_NAME
