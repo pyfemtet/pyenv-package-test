@@ -125,7 +125,7 @@ function RunPytest {
     Set-Location $location
     Set-Location $PACKAGE_NAME
     $yamlPath = Join-Path $PROGRESS_FOLDER "$version-progress.yaml"
-    PyTestCommand($yamlPath, $false)
+    PyTestCommand $yamlPath $false
 
     Set-Location $TEST_ROOT
     return $null
