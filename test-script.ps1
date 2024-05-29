@@ -3,7 +3,6 @@
 
 # detect python versions
 $installTestVersions = GetVersions
-$installTestVersions = @("3.10.1", "3.10.2")  # TEST CODE
 $testVersions = @()
 
 # package install test
