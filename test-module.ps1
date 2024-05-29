@@ -93,7 +93,7 @@ function InstallPackage {
         write-host "$version is not supported by $PACKAGE_NAME."
 
         Set-Location $TEST_ROOT
-        return "Unsupported version"
+        return $false
     }
 
     # install package to test
@@ -106,16 +106,17 @@ function InstallPackage {
         write-host "$version failed to install $PACKAGE_NAME."
 
         Set-Location $TEST_ROOT
-        return "Installation failed"
+        return $true
     }
 
     Set-Location $TEST_ROOT
-    return "Installation passed"
+    return $true
 }
 
 function RunPytest {
     param(
-        [string]$version
+        [string]$version,
+        [bool]$collectOnly=$false
     )
 
     Set-Location $TEST_ROOT
@@ -125,13 +126,13 @@ function RunPytest {
     Set-Location $location
     Set-Location $PACKAGE_NAME
     $yamlPath = Join-Path $PROGRESS_FOLDER "$version-progress.yaml"
-    PyTestCommand $yamlPath $false
+    ExecPyTest $yamlPath $collectOnly
 
     Set-Location $TEST_ROOT
     return $null
 }
 
-function PyTestCommand {
+function ExecPyTest {
     param(
         [string]$yamlPath,
         [bool]$collectOnly

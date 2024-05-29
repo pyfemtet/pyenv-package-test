@@ -1,9 +1,12 @@
 # load module
 . $psscriptroot\test-module.ps1
 
+# detect python versions
+$installTestVersions = GetVersions
+$testVersions = @()
 
-$testVersions = GetVersions
-foreach ($version in $testVersions) {
+# package install test
+foreach ($version in $installTestVersions) {
     write-host "===== $version ====="
 
     write-host "=== remove environment if exists ==="
@@ -14,13 +17,32 @@ foreach ($version in $testVersions) {
     
     write-host "=== install test package ==="
     if ($version -eq "3.13.0a2") {
-        InstallPackage($version, $true)
+        $succeed = InstallPackage $version $true
     } else {
-        InstallPackage($version)
+        $succeed = InstallPackage $version
     }
-    
+
+    if ($succeed) {
+        write-host "=== collect test cases ==="
+        $testVersions += $version
+        RunPytest $version $true
+    } else {
+        write-host "=== skip test ==="
+    }
+
+    write-host ""
+
+}
+
+# start tally process
+Start-Process poetry run tally-pytest
+
+# package test
+foreach ($version in $testVersions) {
+    write-host "===== $version ====="
+
     write-host "=== run pytest ==="
-    RunPytest($version)
+    RunPytest $version
 
     write-host ""
 
