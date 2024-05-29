@@ -4,3 +4,4 @@ poetry.lock
 \test_results
 \test_progress
 \test_root
+*-progress.yaml

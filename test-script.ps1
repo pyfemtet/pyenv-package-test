@@ -3,6 +3,7 @@
 
 # detect python versions
 $installTestVersions = GetVersions
+$installTestVersions = @("3.10.1", "3.10.2")  # TEST CODE
 $testVersions = @()
 
 # package install test
@@ -35,7 +36,7 @@ foreach ($version in $installTestVersions) {
 }
 
 # start tally process
-Start-Process (poetry run tally-pytest $PROGRESS_FOLDER)
+start .\test-tally.bat $PROGRESS_FOLDER
 
 # package test
 foreach ($version in $testVersions) {
