@@ -69,7 +69,6 @@ function InstallPackage {
     Set-Location $PACKAGE_NAME
     pyenv local $version
     git checkout $TEST_BRANCH --quiet
-    poetry config --local virtualenvs.in-project true
 
     # extend python version
     if ($extendPythonVersion) {
@@ -86,30 +85,26 @@ function InstallPackage {
     }
 
     # create virtualenv
-    poetry env use python --quiet
+    python -m pip -m venv .venv
    
-    # virtual environment is NA if the package does not support the version
-    $p = poetry env info --path
-    if ($null -eq $p) {
+    # install package to test
+    remove-item .\poetry.lock
+    .\.venv\scripts\activate.ps1
+    pip install .  # pyfemtet only
+    pip install pytest pytest-dashboard  # test package
+
+    # pyfemtet is not included pip list if installation failed
+    # -> test failed
+    $p = pip list
+    if (-not ($p -contains "pyfemtet")) {
         write-host "$version is not supported by $PACKAGE_NAME."
 
+        deactivate
         Set-Location $TEST_ROOT
         return $false
     }
 
-    # install package to test
-    remove-item .\poetry.lock
-    poetry install --no-interaction --no-cache
-   
-    # no .lock file if install failed
-    # -> test failed
-    if (-not (test-path poetry.lock)) {
-        write-host "$version failed to install $PACKAGE_NAME."
-
-        Set-Location $TEST_ROOT
-        return $true
-    }
-
+    deactivate
     Set-Location $TEST_ROOT
     return $true
 }
@@ -138,11 +133,13 @@ function ExecPyTest {
         [string]$yamlPath,
         [bool]$collectOnly
     )
+    .\.venv\scripts\activate.ps1
     if ($collectOnly) {
-        poetry run pytest $PYTEST_ARGUMENTS --progress-path=$yamlPath --collect-only
+        pytest $PYTEST_ARGUMENTS --progress-path=$yamlPath --collect-only
     } else {
-        poetry run pytest $PYTEST_ARGUMENTS --progress-path=$yamlPath
+        pytest $PYTEST_ARGUMENTS --progress-path=$yamlPath
     }
+    deactivate
 }
 
 function GetVersions {
