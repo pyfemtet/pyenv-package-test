@@ -35,7 +35,7 @@ foreach ($version in $installTestVersions) {
 }
 
 # start tally process
-Start-Process poetry run tally-pytest $PROGRESS_FOLDER
+Start-Process (poetry run tally-pytest $PROGRESS_FOLDER)
 
 # package test
 foreach ($version in $testVersions) {
