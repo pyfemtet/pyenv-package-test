@@ -1,6 +1,7 @@
 {
     "REPOSITORY_URL": "https://github.com/pyfemtet/pyfemtet.git",
     "PACKAGE_NAME": "pyfemtet",
+    "TEST_BRANCH": "main",
     "TEST_ROOT": ".\\test_results",
     "PROGRESS_FOLDER": ".\\test_progress",
     "EXCLUDE_VERSIONS": [

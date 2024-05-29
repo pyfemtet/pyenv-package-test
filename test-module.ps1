@@ -9,6 +9,7 @@ $jsonFilePath = join-path $psscriptroot "test-config.json"
 $jsonContent = Get-Content -Raw -Path $jsonFilePath | ConvertFrom-Json
 $REPOSITORY_URL = $jsonContent.REPOSITORY_URL
 $PACKAGE_NAME = $jsonContent.PACKAGE_NAME
+$TEST_BRANCH = $jsonContent.TEST_BRANCH
 $TEST_ROOT = $jsonContent.TEST_ROOT
 $PROGRESS_FOLDER = $jsonContent.PROGRESS_FOLDER
 $INCLUDE_VERSIONS = $jsonContent.INCLUDE_VERSIONS
@@ -67,7 +68,7 @@ function InstallPackage {
     # set python version to repository
     Set-Location $PACKAGE_NAME
     pyenv local $version
-    git checkout dev --quiet
+    git checkout $TEST_BRANCH --quiet
     poetry config --local virtualenvs.in-project true
 
     # extend python version
