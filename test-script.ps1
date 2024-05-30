@@ -35,7 +35,9 @@ foreach ($version in $installTestVersions) {
 }
 
 # start tally process
-start .\test-tally.bat $PROGRESS_FOLDER
+Set-Location $PSScriptRoot
+$argumentlist = "$PROGRESS_FOLDER --entire_progress_path $ENTIRE_PROGRESS"
+Start-Process -FilePath "test-tally.bat" -WindowStyle Normal -ArgumentList $argumentlist
 
 # package test
 foreach ($version in $testVersions) {
