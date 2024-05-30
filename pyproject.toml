@@ -9,7 +9,7 @@ readme = "README.md"
 python = "^3.11"
 pyyaml = "^6.0.1"
 fire = "^0.6.0"
-pytest-dashboard = "^0.1.1"
+pytest-dashboard = "*"
 
 
 [build-system]
