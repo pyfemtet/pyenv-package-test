@@ -15,6 +15,7 @@ $PROGRESS_FOLDER = $jsonContent.PROGRESS_FOLDER
 $INCLUDE_VERSIONS = $jsonContent.INCLUDE_VERSIONS
 $EXCLUDE_VERSIONS = $jsonContent.EXCLUDE_VERSIONS
 $PYTEST_ARGUMENTS = $jsonContent.PYTEST_ARGUMENTS
+$ENTIRE_PROGRESS = $jsonContent.ENTIRE_PROGRESS
 
 # set-location to root
 Set-Location $psscriptroot

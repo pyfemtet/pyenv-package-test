@@ -4,6 +4,7 @@
     "TEST_BRANCH": "main",
     "TEST_ROOT": ".\\test_results",
     "PROGRESS_FOLDER": ".\\test_progress",
+    "ENTIRE_PROGRESS": ".\\test_progress\\entire.yaml",
     "EXCLUDE_VERSIONS": [
         "3.9.0",
         "3.9.1",
