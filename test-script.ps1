@@ -7,6 +7,7 @@ $testVersions = @()
 
 # package install test
 foreach ($version in $installTestVersions) {
+    write-host ""
     write-host "===== $version ====="
 
     write-host "=== remove environment if exists ==="

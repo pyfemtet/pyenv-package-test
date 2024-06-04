@@ -17,6 +17,7 @@ $EXCLUDE_VERSIONS = $jsonContent.EXCLUDE_VERSIONS
 $PYTEST_ARGUMENTS = $jsonContent.PYTEST_ARGUMENTS
 $ENTIRE_PROGRESS = $jsonContent.ENTIRE_PROGRESS
 
+
 # set-location to root
 Set-Location $psscriptroot
 if ( -not (Test-Path $TEST_ROOT)) {New-Item -ItemType Directory -Path $TEST_ROOT}
@@ -30,7 +31,9 @@ function RemoveEnv {
     param(
         [string]$version
     )
-    
+
+    Set-Location $TEST_ROOT
+
     $location = Join-Path $TEST_ROOT $version
     
     if (Test-Path $location) {
@@ -45,10 +48,16 @@ function SetupEnv {
         [string]$version
     )
     
+    Set-Location $TEST_ROOT
+
     $location = Join-Path $TEST_ROOT $version
-    New-Item -ItemType Directory -Path $location
+    New-Item -ItemType Directory -Path $location > $null
     
+    pyenv uninstall $version
+    start-sleep -Milliseconds 1000
+
     pyenv install $version
+    start-sleep -Milliseconds 1000
 
     Set-Location $TEST_ROOT
     return $true
@@ -60,6 +69,8 @@ function InstallPackage {
         [bool]$extendPythonVersion = $false
     )
     
+    Set-Location $TEST_ROOT
+
     $location = Join-Path $TEST_ROOT $version
 
     # clone repository
@@ -70,6 +81,7 @@ function InstallPackage {
     Set-Location $PACKAGE_NAME
     pyenv local $version
     git checkout $TEST_BRANCH --quiet
+    Start-Sleep -Milliseconds 1000
 
     # extend python version
     if ($extendPythonVersion) {
@@ -86,18 +98,28 @@ function InstallPackage {
     }
 
     # create virtualenv
-    python -m pip -m venv .venv
+    Set-Location $PACKAGE_NAME
+    python -m venv .venv
    
     # install package to test
-    remove-item .\poetry.lock
+    if (test-path .\poetry.lock) {remove-item .\poetry.lock}
     .\.venv\scripts\activate.ps1
+    Start-Sleep -Milliseconds 1000
     pip install .  # pyfemtet only
     pip install pytest pytest-dashboard  # test package
 
     # pyfemtet is not included pip list if installation failed
-    # -> test failed
-    $p = pip list
-    if (-not ($p -contains "pyfemtet")) {
+    $containsPackage = $false
+
+    $piplist = pip list
+    foreach ($pipitem in $piplist) {
+        # write-host ($pipitem.contains("pyfemtet"))
+        $containsPackage = `
+          $containsPackage `
+          + $pipitem.contains($PACKAGE_NAME)
+    }
+
+    if (-not $containsPackage) {
         write-host "$version is not supported by $PACKAGE_NAME."
 
         deactivate
@@ -117,7 +139,7 @@ function RunPytest {
     )
 
     Set-Location $TEST_ROOT
-    if ( -not($PROGRESS_FOLDER)) {New-Item -ItemType Directory $PROGRESS_FOLDER}
+    if ( -not($PROGRESS_FOLDER)) {New-Item -ItemType Directory $PROGRESS_FOLDER > $null}
 
     $location = Join-Path $TEST_ROOT $version
     Set-Location $location
