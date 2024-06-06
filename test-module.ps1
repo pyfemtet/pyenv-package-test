@@ -98,7 +98,6 @@ function InstallPackage {
     }
 
     # create virtualenv
-    Set-Location $PACKAGE_NAME
     python -m venv .venv
    
     # install package to test
