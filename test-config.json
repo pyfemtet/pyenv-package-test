@@ -2,9 +2,9 @@
     "REPOSITORY_URL": "https://github.com/pyfemtet/pyfemtet.git",
     "PACKAGE_NAME": "pyfemtet",
     "TEST_BRANCH": "main",
-    "TEST_ROOT": ".\\test_results",
-    "PROGRESS_FOLDER": ".\\test_progress",
-    "ENTIRE_PROGRESS": ".\\test_progress\\entire.yaml",
+    "TEST_ROOT": ".\\TEST_RESULTS",
+    "PROGRESS_FOLDER": ".\\TEST_PROGRESS",
+    "ENTIRE_PROGRESS": ".\\TEST_PROGRESS\\ENTIRE.yaml",
     "EXCLUDE_VERSIONS": [
         "3.9.0",
         "3.9.1",
@@ -13,5 +13,5 @@
     "INCLUDE_VERSIONS": [
         "3.13.0a2"
     ],
-    "PYTEST_ARGUMENTS": ".\\tests\\test_2_NoFEM"
+    "PYTEST_ARGUMENTS": ["-k", "\"sample and not cad\""]
 }

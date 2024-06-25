@@ -1,3 +1,5 @@
+set-location $psscriptroot
+
 # load module
 . $psscriptroot\test-module.ps1
 

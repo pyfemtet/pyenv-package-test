@@ -53,11 +53,11 @@ function SetupEnv {
     $location = Join-Path $TEST_ROOT $version
     New-Item -ItemType Directory -Path $location > $null
     
-    pyenv uninstall $version
-    start-sleep -Milliseconds 1000
+    # pyenv uninstall $version
+    # start-sleep -Milliseconds 1000
 
-    pyenv install $version
-    start-sleep -Milliseconds 1000
+    # pyenv install $version
+    # start-sleep -Milliseconds 1000
 
     Set-Location $TEST_ROOT
     return $true
@@ -126,6 +126,9 @@ function InstallPackage {
         return $false
     }
 
+    # win32com.client.makepy FemtetMacro
+    python -m win32com.client.makepy FemtetMacro
+
     deactivate
     Set-Location $TEST_ROOT
     return $true
@@ -157,9 +160,9 @@ function ExecPyTest {
     )
     .\.venv\scripts\activate.ps1
     if ($collectOnly) {
-        pytest $PYTEST_ARGUMENTS --progress-path=$yamlPath --collect-only
+        & pytest @($PYTEST_ARGUMENTS) --progress-path=$yamlPath --collect-only
     } else {
-        pytest $PYTEST_ARGUMENTS --progress-path=$yamlPath
+        & pytest @($PYTEST_ARGUMENTS) --progress-path=$yamlPath
     }
     deactivate
 }
