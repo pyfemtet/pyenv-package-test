@@ -4,7 +4,8 @@ set-location $psscriptroot
 . $psscriptroot\test-module.ps1
 
 # detect python versions
-$installTestVersions = GetVersions
+# $installTestVersions = GetVersions
+$installTestVersions = @("3.9.3", "3.10.11", "3.11.9", "3.12.3", "3.13.0a6")  # pyenv install --list | findstr
 $testVersions = @()
 
 # package install test
@@ -19,11 +20,7 @@ foreach ($version in $installTestVersions) {
     SetupEnv($version)
     
     write-host "=== install test package ==="
-    if ($version -eq "3.13.0a2") {
-        $succeed = InstallPackage $version $true
-    } else {
-        $succeed = InstallPackage $version
-    }
+    $succeed = InstallPackage $version $true
 
     if ($succeed) {
         write-host "=== collect test cases ==="
