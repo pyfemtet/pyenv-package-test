@@ -9,6 +9,7 @@ $jsonFilePath = join-path $psscriptroot "test-config.json"
 $jsonContent = Get-Content -Raw -Path $jsonFilePath | ConvertFrom-Json
 $REPOSITORY_URL = $jsonContent.REPOSITORY_URL
 $PACKAGE_NAME = $jsonContent.PACKAGE_NAME
+$LIBRARY_NAME = $jsonContent.LIBRARY_NAME
 $TEST_BRANCH = $jsonContent.TEST_BRANCH
 $TEST_ROOT = $jsonContent.TEST_ROOT
 $PROGRESS_FOLDER = $jsonContent.PROGRESS_FOLDER
@@ -16,6 +17,7 @@ $INCLUDE_VERSIONS = $jsonContent.INCLUDE_VERSIONS
 $EXCLUDE_VERSIONS = $jsonContent.EXCLUDE_VERSIONS
 $PYTEST_ARGUMENTS = $jsonContent.PYTEST_ARGUMENTS
 $ENTIRE_PROGRESS = $jsonContent.ENTIRE_PROGRESS
+$SHOULD_MAKEPY = $jsonContent.SHOULD_MAKEPY
 
 
 # set-location to root
@@ -70,20 +72,22 @@ function InstallPackage {
     )
     
     Set-Location $TEST_ROOT
-
     $location = Join-Path $TEST_ROOT $version
 
     # clone repository
+    write-host "----- clone $REPOSITORY_URL -----"
     Set-Location $location
     git clone $REPOSITORY_URL --quiet
    
     # set python version to repository
+    write-host "----- set pyenv version -----"
     Set-Location $PACKAGE_NAME
     pyenv local $version
-    git checkout $TEST_BRANCH --quiet
+    git checkout -b $TEST_BRANCH --quiet
     Start-Sleep -Milliseconds 1000
 
     # extend python version
+    write-host "----- edit pyproject.toml -----"
     if ($extendPythonVersion) {
         $tomlPath = "pyproject.toml"
         $content = Get-Content -Path $tomlPath | ForEach-Object {
@@ -98,9 +102,12 @@ function InstallPackage {
     }
 
     # create virtualenv
+    write-host "----- creating .venv -----"
     python -m venv .venv
    
     # install package to test
+    write-host "----- activate .venv and installing -----"
+    write-host "(It will take few minutes.)"
     if (test-path .\poetry.lock) {remove-item .\poetry.lock}
     .\.venv\scripts\activate.ps1
     Start-Sleep -Milliseconds 1000
@@ -108,14 +115,15 @@ function InstallPackage {
     pip install pytest pytest-dashboard  # test package
 
     # pyfemtet is not included pip list if installation failed
+    write-host "----- checking installing -----"
     $containsPackage = $false
 
     $piplist = pip list
     foreach ($pipitem in $piplist) {
-        # write-host ($pipitem.contains("pyfemtet"))
         $containsPackage = `
           $containsPackage `
-          + $pipitem.contains($PACKAGE_NAME)
+          + $pipitem.contains($PACKAGE_NAME) `
+          + $pipitem.contains($LIBRARY_NAME) `
     }
 
     if (-not $containsPackage) {
@@ -126,8 +134,10 @@ function InstallPackage {
         return $false
     }
 
-    # win32com.client.makepy FemtetMacro
-    python -m win32com.client.makepy FemtetMacro
+    if ($SHOULD_MAKEPY) {
+        # win32com.client.makepy FemtetMacro
+        python -m win32com.client.makepy FemtetMacro
+    }
 
     deactivate
     Set-Location $TEST_ROOT

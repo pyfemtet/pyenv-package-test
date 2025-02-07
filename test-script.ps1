@@ -5,7 +5,7 @@ set-location $psscriptroot
 
 # detect python versions
 # $installTestVersions = GetVersions
-$installTestVersions = @("3.9.3", "3.10.11", "3.11.9", "3.12.3", "3.13.0a6")  # pyenv install --list | findstr
+$installTestVersions = @("3.10.9", "3.11.7", "3.12.1")  # pyenv install --list | findstr
 $testVersions = @()
 
 # package install test
